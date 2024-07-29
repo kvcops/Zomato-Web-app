@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zomato Restaurants</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #cb202d;
+            --secondary-color: #ffffff;
+            --text-color: #333333;
+            --background-color: #f8f8f8;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+    
+        .filters {
+            background-color: var(--secondary-color);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            margin-bottom: 30px;
+            animation: slideInDown 0.8s ease;
+        }
+
+        .filters form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            flex: 1 1 200px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .filters select, 
+        .filters input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .filters select:focus, 
+        .filters input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .filters button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filters button:hover {
+            background-color: #a61c27;
+        }
+
+        
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .active-filter {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .active-filter:hover {
+            background-color: #a61c27; 
+        }
+
+        .active-filter a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin-left: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+      
+        .restaurant-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            list-style-type: none;
+        }
+
+        .restaurant-item {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .restaurant-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .restaurant-item a {
+            display: block;
+            padding: 20px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .restaurant-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .restaurant-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .rating i {
+            color: gold; 
+        }
+
+ 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #a61c27;
+        }
+
+     
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Zomato Restaurants</h1>
+        
+        <div class="filters">
+            <form action="{{ url_for('restaurant_list') }}" method="get">
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select name="country" id="country">
+                        <option value="">All Countries</option>
+                        {% for code, name in countries %}
+                            <option value="{{ code }}" {% if current_filters.country == code %}selected{% endif %}>
+                                {{ name }} 
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="min_cost">Min Cost</label>
+                    <input type="number" name="min_cost" id="min_cost" placeholder="Min Cost" value="{{ current_filters.min_cost or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="max_cost">Max Cost</label>
+                    <input type="number" name="max_cost" id="max_cost" placeholder="Max Cost" value="{{ current_filters.max_cost or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="cuisines">Cuisines</label>
+                    <select name="cuisines" id="cuisines">
+                        <option value="">All Cuisines</option>
+                        {% for cuisine in cuisines %}
+                            <option value="{{ cuisine }}" {% if current_filters.cuisines == cuisine %}selected{% endif %}>{{ cuisine }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="search">Search</label>
+                    <input type="text" name="search" id="search" placeholder="Search restaurants" value="{{ current_filters.search or '' }}">
+                </div>
+                <button type="submit">Apply Filters</button>
+            </form>
+        </div>
+
+        <div class="active-filters">
+            {% for key, value in current_filters.items() %}
+                {% if value %}
+                    <span class="active-filter">
+                        {{ key }}: {{ value }}
+                        <a href="{{ url_for('restaurant_list', **dict(request.args, **{key: None})) }}">
+                            <i class="fas fa-times"></i> 
+                        </a>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <ul class="restaurant-list">
+        {% for restaurant in restaurants %}
+            <li class="restaurant-item">
+                <a href="{{ url_for('restaurant_detail', id=restaurant['id']) }}">
+                    <div class="restaurant-name">{{ restaurant['name'] }}</div>
+                    <div class="restaurant-info">{{ restaurant['cuisines'] }}</div>
+                    <div class="restaurant-info rating">
+                        Rating: 
+                        {% for i in range(5) %}
+                            {% if i < restaurant['aggregate_rating'] %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i> 
+                            {% endif %}
+                        {% endfor %} 
+                        {{ restaurant['aggregate_rating'] }}/5
+                    </div>
+                    <div class="restaurant-info">
+                        Cost for Two: {{ restaurant['average_cost_for_two'] }} {{ restaurant['currency'] }}
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('restaurant_list', page=page-1, **current_filters) }}">Previous</a>
+            {% endif %}
+            
+            {% if page * per_page < total %}
+                <a href="{{ url_for('restaurant_list', page=page+1, **current_filters) }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
