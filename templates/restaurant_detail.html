@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ restaurant['name'] }} - Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto; 
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); 
+            border-radius: 10px;
+            animation: slideInUp 0.8s ease; 
+        }
+
+        h1 {
+            color: #e23744;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(226, 55, 68, 0.5); 
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px; 
+        }
+
+        .info-item {
+            background-color: #f9f9f9;
+            padding: 20px; 
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .info-item:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #e23744;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .info-value {
+            font-size: 1.05em;
+        }
+
+        .rating {
+            font-size: 1.3em;
+            color: #ffa500; 
+        }
+
+        .rating i {
+            margin-right: 3px;
+        }
+
+        .back-button {
+            display: block; 
+            width: fit-content; 
+            margin: 20px auto; 
+            padding: 12px 25px; 
+            background-color: #e23744;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px; 
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #c62c38;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ restaurant['name'] }}</h1>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Address</div>
+                <div class="info-value">{{ restaurant['address'] }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">City</div>
+                <div class="info-value">{{ restaurant['city'] }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Cuisines</div>
+                <div class="info-value">{{ restaurant['cuisines'] }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Average Cost for Two</div>
+                <div class="info-value">{{ restaurant['average_cost_for_two'] }} {{ restaurant['currency'] }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Rating</div>
+                <div class="info-value">
+                    <span class="rating">
+                        {% for i in range(5) %}
+                            {% if i < restaurant['aggregate_rating'] %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i> 
+                            {% endif %}
+                        {% endfor %}
+                        {{ restaurant['aggregate_rating'] }} 
+                    </span>
+                    ({{ restaurant['rating_text'] }})
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Table Booking</div>
+                <div class="info-value">
+                    {% if restaurant['has_table_booking'] == 'Yes' %}
+                        <i class="fas fa-check-circle" style="color: green;"></i> Available 
+                    {% else %}
+                        <i class="fas fa-times-circle" style="color: red;"></i> Not Available 
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Online Delivery</div>
+                <div class="info-value">
+                    {% if restaurant['has_online_delivery'] == 'Yes' %}
+                        <i class="fas fa-check-circle" style="color: green;"></i> Available
+                    {% else %}
+                        <i class="fas fa-times-circle" style="color: red;"></i> Not Available
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <a href="{{ url_for('restaurant_list') }}" class="back-button">Back to List</a>
+    </div>
+</body>
+</html>
